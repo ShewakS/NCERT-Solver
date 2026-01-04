@@ -1,0 +1,13 @@
+fastapi
+uvicorn[standard]
+sentence-transformers
+faiss-cpu
+chromadb
+pymupdf
+pdfplumber
+pytesseract
+langdetect
+python-multipart
+pydantic
+requests
+python-dotenv
