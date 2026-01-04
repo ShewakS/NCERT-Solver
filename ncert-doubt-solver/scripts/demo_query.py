@@ -1,10 +1,16 @@
+import sys
+import os
+
+# Add project root to path
+sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
+
 from backend.rag.pipeline import RAGPipeline
 
 p = RAGPipeline()
 
 examples = [
     {"class_no": 5, "question": "What are the parts of a plant?", "language": "en"},
-    {"class_no": 5, "question": "पौधे के भाग कौन-कौन से हैं?", "language": "hi"},
+    # {"class_no": 5, "question": "पौधे के भाग कौन-कौन से हैं?", "language": "hi"},
 ]
 
 for ex in examples:

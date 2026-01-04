@@ -40,7 +40,7 @@ class LLMGenerator:
         prompt = RAG_PROMPT_TEMPLATE.format(context=context_str, question=question)
 
         try:
-            print(f"[OLLAMA] Generating answer for: {question[:50]}...")
+            print(f"[OLLAMA] Generating answer for: {question[:50]}...", flush=True)
             
             # Call Ollama API with proper format
             payload = {
@@ -48,10 +48,11 @@ class LLMGenerator:
                 "prompt": prompt,
                 "stream": False,
                 "options": {
-                    "temperature": 0.2,
-                    "num_predict": 256,
+                    "temperature": 0.4,
+                    "num_predict": 512,
                     "top_p": 0.9,
-                    "top_k": 40
+                    "top_k": 40,
+                    "stop": ["</s>", "<|user|>", "<|assistant|>", "<|system|>"]
                 }
             }
             

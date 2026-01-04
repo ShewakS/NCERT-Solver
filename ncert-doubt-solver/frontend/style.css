@@ -1,7 +1,82 @@
-body { font-family: Arial, sans-serif; background:#f7f7f7; }
-#app { max-width: 700px; margin: 40px auto; background: #fff; padding: 20px; border-radius: 6px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
-#question { width: 100%; height: 100px; }
-#chat { margin-top: 20px; }
-.message { padding: 8px; border-radius: 4px; margin-bottom: 8px; }
-.message.user { background: #e6f7ff; }
-.message.bot { background: #f0f2f5; }
+body { 
+    font-family: 'Inter', system-ui, -apple-system, sans-serif; 
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); 
+    min-height: 100vh;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+#app { 
+    width: 90%;
+    max-width: 800px; 
+    background: rgba(255, 255, 255, 0.95); 
+    padding: 30px; 
+    border-radius: 16px; 
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1); 
+    backdrop-filter: blur(10px);
+}
+h1 { color: #2d3436; font-weight: 700; margin-bottom: 24px; }
+.input-group { margin-bottom: 20px; }
+#question { 
+    width: 100%; 
+    height: 120px; 
+    padding: 15px;
+    border: 1px solid #dfe6e9;
+    border-radius: 8px;
+    font-size: 16px;
+    resize: none;
+    transition: border-color 0.3s;
+}
+#question:focus { border-color: #0984e3; outline: none; }
+#ask {
+    background: #0984e3;
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s, background 0.3s;
+}
+#ask:hover { background: #074b83; transform: translateY(-1px); }
+#chat { 
+    margin-top: 30px; 
+    max-height: 500px;
+    overflow-y: auto;
+    padding-right: 10px;
+}
+.message { 
+    padding: 15px; 
+    border-radius: 12px; 
+    margin-bottom: 15px; 
+    line-height: 1.6;
+    animation: fadeIn 0.3s ease-out;
+}
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.message.user { 
+    background: #e1f5fe; 
+    color: #01579b;
+    align-self: flex-end;
+    margin-left: 20%;
+}
+.message.bot { 
+    background: #ffffff; 
+    border: 1px solid #f0f0f0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+.answer-text { color: #2d3436; font-size: 16px; }
+.sources { 
+    margin-top: 12px; 
+    padding-top: 10px;
+    border-top: 1px dashed #eee;
+    color: #636e72;
+}
+.source-item { margin-top: 4px; }
+small { font-size: 0.85em; }
+select {
+    padding: 8px;
+    border-radius: 6px;
+    border: 1px solid #dfe6e9;
+    margin-bottom: 10px;
+}

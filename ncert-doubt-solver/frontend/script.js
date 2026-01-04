@@ -9,18 +9,18 @@ document.getElementById('ask').addEventListener('click', async () => {
   document.getElementById('question').value = '';
 
   console.log('Sending request:', { question: q, class_no, history });
-  
+
   const res = await fetch('/api/chat/', {
     method: 'POST', headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ question: q, class_no, history })
   });
-  
+
   console.log('Response status:', res.status);
-  
+
   let data;
-  const botEl = document.createElement('div'); 
+  const botEl = document.createElement('div');
   botEl.className = 'message bot';
-  
+
   if (!res.ok) {
     const errorText = await res.text();
     console.error('Error response:', errorText);
@@ -29,14 +29,43 @@ document.getElementById('ask').addEventListener('click', async () => {
     chat.appendChild(botEl);
     return;
   }
-  
+
   try {
     data = await res.json();
     console.log('Received data:', data);
-    botEl.textContent = data.answer || JSON.stringify(data);
+
+    // Create answer container
+    const answerEl = document.createElement('div');
+    answerEl.className = 'answer-text';
+    answerEl.textContent = data.answer || "I'm sorry, I couldn't generate an answer.";
+    botEl.appendChild(answerEl);
+
+    // Create sources container if metadata exists
+    if (data.retrieved && data.retrieved.length > 0) {
+      const sourcesEl = document.createElement('div');
+      sourcesEl.className = 'sources';
+      sourcesEl.innerHTML = '<small><strong>Sources:</strong></small>';
+
+      const seenSources = new Set();
+      data.retrieved.forEach(m => {
+        const sourceId = `${m.source_pdf} - Page ${m.page}`;
+        if (!seenSources.has(sourceId)) {
+          const s = document.createElement('div');
+          s.className = 'source-item';
+          s.innerHTML = `<small>• ${m.source_pdf} (Page ${m.page})</small>`;
+          sourcesEl.appendChild(s);
+          seenSources.add(sourceId);
+        }
+      });
+      botEl.appendChild(sourcesEl);
+    }
+
     chat.appendChild(botEl);
-    history.push({ role: "user", content: q });
-    history.push({ role: "assistant", content: data.answer });
+
+    if (data.answer) {
+      history.push({ role: "user", content: q });
+      history.push({ role: "assistant", content: data.answer });
+    }
   } catch (e) {
     console.error('Parse error:', e);
     botEl.textContent = `Failed to parse response: ${e.message}`;
