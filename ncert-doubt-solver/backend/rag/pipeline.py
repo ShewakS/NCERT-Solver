@@ -11,19 +11,24 @@ class RAGPipeline:
 
     def answer(self, question: str, class_no: int, language: Optional[str] = None, history: Optional[List[dict]] = None):
         lang = language or detect_language(question)
+        class_name = f"Class {class_no}"
+        RELEVANCE_THRESHOLD = 0.35  # Strict threshold for syllabus gating
         
         # If history exists, we should ideally contextualize the question.
-        # For this scaffold, we will simple append the last turn if it exists, or just pass it through.
-        # A better approach (OPEA style) is a standalone "Contextualize" step using LLM.
-        # Let's do a simple concatenation for now to keep it fast on CPU:
+        # ... logic as before ...
         final_query = question
         if history and len(history) > 0:
             last_msg = history[-1]
             if last_msg.get('role') == 'assistant':
-                # very naive contextualization: "Context: <prev_answer>. Question: <new_question>"
-                # logic: help retrieval if pronouns are used.
                 final_query = f"{last_msg.get('content')} {question}"
         
         docs = self.retriever.retrieve(final_query, class_no=class_no, language=lang)
-        answer = self.generator.generate(question=question, docs=docs, language=lang)
+        
+        # Gating logic: Check if the best retrieved chunk matches the syllabus well enough
+        if not docs or (docs[0].score < RELEVANCE_THRESHOLD):
+            print(f"[GATING] Question likely out of syllabus (best score: {docs[0].score if docs else 'None'} < {RELEVANCE_THRESHOLD})")
+            answer = f"I'm sorry, I couldn't find information about '{question}' in the {class_name} NCERT textbooks. I can only help with topics covered in the syllabus."
+            return {"answer": answer, "retrieved": [d.meta for d in docs]}
+
+        answer = self.generator.generate(question=question, docs=docs, language=lang, class_name=class_name)
         return {"answer": answer, "retrieved": [d.meta for d in docs]}

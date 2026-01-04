@@ -21,23 +21,20 @@ class LLMGenerator:
             print(f"⚠ WARNING: Cannot connect to Ollama at {OLLAMA_API_URL}")
             print(f"  Error: {e}")
 
-    def generate(self, question: str, docs: List, language: str) -> str:
+    def generate(self, question: str, docs: List, language: str, class_name: str = "Class 5") -> str:
         """Generate answer from retrieved documents using Ollama."""
         
         if not docs:
-            return "I don't know - I couldn't find relevant information in the NCERT textbook for your question."
-
+            return f"I'm sorry, I couldn't find any information about '{question}' in the {class_name} NCERT textbooks. Please make sure your question is within the syllabus."
         # Prepare context from retrieved PDF chunks
         context_parts = []
         for i, doc in enumerate(docs):
-            meta = doc.meta or {}
-            source = f"[{meta.get('source_pdf', 'Unknown')} - Page {meta.get('page', '?')}]"
             context_parts.append(f"{doc.text}")
         
-        context_str = "\n\n".join(context_parts[:5])  # Limit to top 5 chunks to avoid token limit
+        context_str = "\n\n".join(context_parts[:5])  # Limit to top 5 chunks
         
         # Create prompt
-        prompt = RAG_PROMPT_TEMPLATE.format(context=context_str, question=question)
+        prompt = RAG_PROMPT_TEMPLATE.format(context=context_str, question=question, class_name=class_name)
 
         try:
             print(f"[OLLAMA] Generating answer for: {question[:50]}...", flush=True)
